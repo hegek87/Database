@@ -27,7 +27,7 @@ select distinct * from
     Media_Item natural join Item_Video_Game natural join Video_Game
     where Release_Date = curdate();
 
-#6.
+#6. THIS WORKS!
 #Which movies have a video game based on them?
 
 select distinct Title from
@@ -49,11 +49,11 @@ select distinct Title from
 #How many PG-13 movies coming to theaters this week have a runtime of less than 100 minutes?
 
 select count(*) from
-    Movie natural join Media_Item
+    Movie natural join Item_Movie natural join Media_Item
     where Movie_Rating='PG-13'
     and Runtime <= 100
-    and In_Theaters=1
-    and Release_Date <= 7;
+    and In_Theaters=true
+    and datediff(curdate(),Release_Date) <= 7;
 
 
 #11.
