@@ -1,0 +1,269 @@
+create table User_Gender(
+	gender char(1),
+	primary key(gender)
+) engine=InnoDB;
+
+insert into User_Gender values('M'),('F'),('U');
+
+create table States(
+	Location char(2),
+	primary key(Location)
+) engine=InnoDB;
+
+insert into States values('AL'),('AK'),('AZ'),('AR'),('CA'),('CO'),('CT'),('DE'),('FL'),('GA'),('HI'),('ID'),('IL'),('IN'),('IA'),('KS'),('KY'),('LA'),('ME'),('MD'),('MA'),('MI'),('MN'),('MS'),('MO'),('MT'),('NE'),('NV'),('NH'),('NJ'),('NM'),('NY'),('NC'),('ND'),('OH'),('OK'),('OR'),('PA'),('RI'),('SC'),('SD'),('TN'),('TX'),('UT'),('VT'),('VA'),('WA'),('WV'),('WI'),('WY');
+
+create table Website_User(
+	Password varchar(24),
+	Username varchar(15),
+	DOB date,
+	gender char(1),
+	Location char(2),
+	primary key(Username),
+	foreign key(gender) references User_Gender (gender),
+	foreign key(Location) references States (Location)
+) engine=InnoDB;
+
+create table User_Email(
+	Email varchar(255),
+	Username varchar(15),
+	primary key (Username,Email),
+	foreign key(Username) references Website_User(Username)
+) engine=InnoDB;
+
+insert into Website_User values('12345678','BOB','1910-08-11','M','VA');
+insert into User_Email values('TEST1@gmail.com','BOB'),('TEST1@yahoo.com','BOB'),('TEST2@gmail.com','BOB');
+
+
+
+CREATE TABLE IF NOT EXISTS `Media_Item` (
+  `Media_ID` INT NOT NULL AUTO_INCREMENT,
+  `Title` VARCHAR(255) NOT NULL,
+  `Release_Date` DATE NOT NULL,
+  PRIMARY KEY (`Media_ID`))
+ENGINE = InnoDB;
+
+create table Album_Genre(
+	Genre varchar(255),
+	primary key(Genre)
+) engine=InnoDB;
+
+CREATE TABLE IF NOT EXISTS `Item_Album` (
+  `Media_ID` INT NOT NULL,
+  `Album_ID` INT NOT NULL,
+  PRIMARY KEY(`Media_ID`,`Album_ID`),
+  FOREIGN KEY(`Media_ID`) REFERENCES `Media_Item`(`Media_ID`),
+  FOREIGN KEY(`Album_ID`) REFERENCES `Album`(`Album_ID`))
+ENGINE = InnoDB;
+
+CREATE TABLE IF NOT EXISTS `Album` (
+  `Album_ID` INT NOT NULL AUTO_INCREMENT,
+  `Artist` VARCHAR(255) NOT NULL,
+  `Label` VARCHAR(255) NOT NULL,
+  `Track_Count` SMALLINT UNSIGNED NOT NULL,
+  `Album_Genre` VARCHAR(255) NOT NULL,
+  FOREIGN KEY(`Album_Genre`) REFERENCES `Album_Genre`(`Genre`),
+  PRIMARY KEY(`Album_ID`))
+ENGINE = InnoDB;
+
+create table Book_Genre(
+	Genre varchar(255),
+	primary key (Genre)
+) engine=InnoDB;
+
+create table Type_List(
+	Type varchar(255),
+	primary key(Type)
+) engine=InnoDB;
+
+CREATE TABLE IF NOT EXISTS `Book` (
+  `ISBN_13` VARCHAR(13) NOT NULL,
+  `Pages` SMALLINT UNSIGNED NOT NULL,
+  `Book_Genre` VARCHAR(255) NOT NULL,
+  `Book_Type` VARCHAR(11) NOT NULL,
+  `Publisher` VARCHAR(255) NOT NULL,
+  `Edition` TINYINT UNSIGNED NOT NULL,
+  FOREIGN KEY(`Book_Genre`) REFERENCES `Book_Genre`(`Genre`),
+  PRIMARY KEY(`ISBN_13`))
+ENGINE = InnoDB;
+
+create table Book_Type(
+	ISBN_13 varchar(13),
+	Type varchar(255),
+	primary key(ISBN_13, Type),
+	foreign key (ISBN_13) references Book (ISBN_13),
+	foreign key (Type) references Type_List(Type)
+) engine=InnoDB;
+
+create table Item_Book(
+	ISBN_13 varchar(13),
+	Media_ID int,
+	primary key(ISBN_13, Media_ID),
+	foreign key (ISBN_13) references Book (ISBN_13),
+	foreign key (Media_ID) references Media_Item(Media_ID)
+) engine=InnoDB;
+
+CREATE TABLE IF NOT EXISTS `Movie` (
+  `Movie_ID` INT NOT NULL AUTO_INCREMENT,
+  `Movie_Genre` VARCHAR(255) NOT NULL,
+  `Movie_Rating` VARCHAR(5) NOT NULL,
+  `Runtime` SMALLINT UNSIGNED NOT NULL,
+  `In_Theaters` BOOLEAN NOT NULL,
+  FOREIGN KEY(`Movie_Genre`) REFERENCES `Movie_Genre`(`Genre`),
+  FOREIGN KEY(`Movie_Rating`) REFERENCES `Movie_Rating`(`Rating`),
+  PRIMARY KEY(`Movie_ID`))
+ENGINE = InnoDB;
+
+create table Item_Movie(
+	Movie_ID int,
+	Media_ID int,
+	primary key(Movie_ID, Media_ID),
+	foreign key (Media_ID) references Media_Item(Media_ID),
+	foreign key (Movie_ID) references Movie(Movie_ID)
+) engine=InnoDB;
+
+CREATE TABLE IF NOT EXISTS `Television_Season` (
+  `Television_Season_ID` INT NOT NULL AUTO_INCREMENT,
+  `Television_Season_Genre` VARCHAR(255) NOT NULL,
+  `Television_Season_Rating` VARCHAR(8) NOT NULL,
+  `Network` VARCHAR(255) NOT NULL,
+  `Episode_Count` TINYINT UNSIGNED NOT NULL,
+  `Runtime` TINYINT UNSIGNED NOT NULL,
+  `Air_Time` TIME NOT NULL,
+  `On_Air` BOOLEAN NOT NULL,
+  FOREIGN KEY(`Television_Season_Genre`) REFERENCES `Television_Season_Genre`(`Genre`),
+  FOREIGN KEY(`Television_Season_Rating`) REFERENCES `Television_Season_Rating`(`Rating`),
+  PRIMARY KEY(`Television_Season_ID`))
+ENGINE = InnoDB;
+
+create table Item_Television_Season(
+	Media_ID int,
+	Television_Season_ID int,
+	primary key(Media_ID, Television_Season_ID),
+	foreign key(Media_ID) references Media_Item(Media_ID),
+	foreign key (Television_Season_ID) references Television_Season (Television_Season_ID)
+) engine=InnoDB;
+
+CREATE TABLE IF NOT EXISTS `Video_Game` (
+  `Video_Game_ID` INT NOT NULL AUTO_INCREMENT,
+  `Video_Game_Genre` VARCHAR(255) NOT NULL,
+  `Video_Game_Rating` VARCHAR(4) NOT NULL,
+  `Platform` VARCHAR(255) NOT NULL,
+  `Developer` VARCHAR(255) NOT NULL,
+  `Publisher` VARCHAR(255) NOT NULL,
+  FOREIGN KEY(`Video_Game_Genre`) REFERENCES `Video_Game_Genre`(`Genre`),
+  FOREIGN KEY(`Video_Game_Rating`) REFERENCES `Video_Game_Rating`(`Rating`),
+  PRIMARY KEY(`Video_Game_ID`))
+ENGINE = InnoDB;
+
+create table Item_Video_Game(
+	Media_ID int,
+	Video_Game_ID int,
+	primary key(Media_ID, Video_Game_ID),
+	foreign key (Media_ID) references Media_Item(Media_ID),
+	foreign key (Video_Game_ID) references Video_Game(Video_Game_ID)
+) engine=InnoDB;
+
+create table Soundtrack(
+	Movie_ID int,
+	Album_ID int,
+	primary key(Movie_ID, Album_ID),
+	foreign key (Movie_ID) references Movie(Movie_ID),
+	foreign key (Album_ID) references Album(Album_ID)
+) engine=InnoDB;
+
+create table Adaptation(
+	Movie_ID int,
+	ISBN_13 varchar(13),
+	primary key(Movie_ID, ISBN_13),
+	foreign key(Movie_ID) references Movie(Movie_ID),
+	foreign key(ISBN_13) references Book(ISBN_13)
+) engine=InnoDB;
+
+create table Based_On(
+	Movie_ID int,
+	Video_Game_ID int,
+	primary key(Movie_ID, Video_Game_ID),
+	foreign key(Movie_ID) references Movie(Movie_ID),
+	foreign key(Video_Game_ID) references Video_Game(Video_Game_ID)
+) engine=InnoDB;
+
+create table Like_Dislike(
+	Username varchar(15),
+	Media_ID int,
+	Like_val tinyint,
+	primary key(Username, Media_ID),
+	foreign key(Username) references Website_User(Username),
+	foreign key(Media_ID) references Media_Item(Media_ID)
+) engine=InnoDB;
+
+create table Anticipating(
+	Username varchar(15),
+	Media_ID int,
+	primary key(Username, Media_ID),
+	foreign key(Username) references Website_User(Username),
+	foreign key(Media_ID) references Media_Item(Media_ID)
+) engine=InnoDB;
+
+create table Movie_Genre(
+	Genre varchar(255),
+	primary key (Genre)
+) engine=InnoDB;
+
+create table Television_Season_Genre(
+	Genre varchar(255),
+	primary key(Genre)
+) engine=InnoDB;
+
+create table Video_Game_Genre(
+	Genre varchar(255),
+	primary key(Genre)
+) engine=InnoDB;
+
+create table Movie_Rating(
+	Rating varchar(5),
+	primary key(Rating)
+) engine=InnoDB;
+
+create table Television_Season_Rating(
+	Rating varchar(255),
+	primary key(Rating)
+) engine=InnoDB;
+
+create table Video_Game_Rating(
+	Rating varchar(255),
+	primary key(Rating)
+) engine=InnoDB;
+
+create table Person(
+	Worker_ID int not null auto_increment,
+	First_Name varchar(30),
+	Last_Name varchar(30),
+	primary key(Worker_ID)
+) engine=InnoDB;
+
+create table Occupation(
+	Job_Title varchar(30),
+	primary key(Job_Title)
+) engine=InnoDB;
+
+create table Works_As(
+	Worker_ID int,
+	Job_Title varchar(30),
+	primary key(Worker_ID, Job_Title),
+	foreign key(Worker_ID) references Person(Worker_ID),
+	foreign key(Job_Title) references Occupation(Job_Title)
+) engine=InnoDB;
+
+create table Associated_With(
+	Media_ID int,
+	Worker_ID int,
+	primary key(Media_ID, Worker_ID),
+	foreign key(Media_ID) references Media_Item(Media_ID),
+	foreign key(Worker_ID) references Person(Worker_ID)
+) engine=InnoDB;
+
+
+insert into Album_Genre values('Rock');
+insert into Media_Item values('TEST','1980-10-11');
+insert into Album values('babymetal', 'allkjf', 'afghfg',' 10, 'Rock');
+select *from User_Email natural join Website_User;
